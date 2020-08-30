@@ -1,8 +1,8 @@
 # ACISDetector
 Detector for instruction set, architecture and compiler on raw binaries.
 
-## jupter notebook
-You can also view our results notebooks in your browser using `nbviewer`!
+## jupyter notebook
+You can also view our results notebooks in your browser using `jupter notebook`!
 
 ### Environment set-up
 
