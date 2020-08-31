@@ -81,7 +81,7 @@ class ConvClassifier(nn.Module):
         out = self.classifier(features)
         return out
 
-class ISADetectMLP(nn.Module):
+class ISADetectLogisticRegression(nn.Module):
     """
     A FC layer from features map to each of the classes followed by a softmax activation layer
     """
