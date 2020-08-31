@@ -81,6 +81,35 @@ class ConvClassifier(nn.Module):
         out = self.classifier(features)
         return out
 
+class ISADetectMLP(nn.Module):
+    """
+    A FC layer from features map to each of the classes followed by a softmax activation layer
+    """
+
+    def __init__(self, in_size, out_classes: int):
+        """
+        :param in_size: Size of input
+        :param out_classes: Number of classes to output in the final layer.
+        """
+        super().__init__()
+
+        self.in_size = in_size
+        self.out_classes = out_classes
+
+        self.classifier = self._make_classifier()
+
+    def _make_classifier(self):
+        layers = []
+        layers.append(nn.Linear(self.in_size, self.out_classes, bias = True))
+        layers.append(nn.Softmax(dim = 1))
+        seq = nn.Sequential(*layers)
+        return seq
+
+    def forward(self, x):
+        out = self.classifier(x)
+        return out
+    
+
 class MLP(nn.Module):
     """
     A convolutional classifier model based on PyTorch nn.Modules.
