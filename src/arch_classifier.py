@@ -134,6 +134,11 @@ class MLP(nn.Module):
         #  Extract features from the input, run the classifier on them and
         #  return class scores.
         return out
+        
+    def fit(self, x):
+        #  Extract features from the input, run the classifier on them and
+        #  return class scores.
+        return out
     
     
 class RandomForest(nn.Module):
