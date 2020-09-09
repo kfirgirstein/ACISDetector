@@ -16,7 +16,7 @@ class CNN(nn.Module):
     def __init__(self, in_size, out_classes: int, channels: list,
                  pool_every: int, hidden_dims: list):
         """
-        :param in_size: Size of input images, e.g. (C,H,W).
+        :param in_size: Size of input e.g. (H,W).
         :param out_classes: Number of classes to output in the final layer.
         :param channels: A list of of length N containing the number of
             (output) channels in each conv layer.
@@ -37,14 +37,10 @@ class CNN(nn.Module):
         self.classifier = self._make_classifier()
 
     def _make_feature_extractor(self):
-        in_channels, in_h, in_w, = tuple(self.in_size)
-
+        in_h, in_w, = tuple(self.in_size)
+        in_channels = 1
         layers = []
         #  [(CONV -> ReLU)*P -> MaxPool]*(N/P)
-        #  Use only dimension-preserving 3x3 convolutions. Apply 2x2 Max
-        #  Pooling to reduce dimensions after every P convolutions.
-        #  Note: If N is not divisible by P, then N mod P additional
-        #  CONV->ReLUs should exist at the end, without a MaxPool after them.
         for i in range(len(self.channels)):
             layers.append(nn.Conv2d(in_channels, self.channels[i], 3, padding = 1))
             in_channels = self.channels[i]
@@ -56,13 +52,10 @@ class CNN(nn.Module):
         return seq
 
     def _make_classifier(self):
-        in_channels, in_h, in_w, = tuple(self.in_size)
+        in_h, in_w, = tuple(self.in_size)
 
         layers = []
         #  (Linear -> ReLU)*M -> Linear
-        #  You'll first need to calculate the number of features going in to
-        #  the first linear layer.
-        #  The last Linear layer should have an output dim of out_classes.
         div_param = 2 ** (len(self.channels) // self.pool_every)
         layers.append(nn.Linear(int((in_h/div_param) * (in_w/div_param) * self.channels[-1]), self.hidden_dims[0]))
         layers.append(nn.ReLU())
