@@ -5,7 +5,7 @@ import torch.nn as nn
 from sklearn.ensemble import RandomForestClassifier
 
 
-class ConvClassifier(nn.Module):
+class CNN(nn.Module):
     """
     A convolutional classifier model based on PyTorch nn.Modules.
 
@@ -111,63 +111,52 @@ class ISADetectLogisticRegression(nn.Module):
     
 
 class MLP(nn.Module):
+    """  
+    Multi layer perceptron.
+    All layers are fully conected.
+    Relu after every layer and a softmax after the last layer.
     """
-    A convolutional classifier model based on PyTorch nn.Modules.
 
-    The architecture is:
-    [(CONV -> ReLU)*P -> MaxPool]*(N/P) -> (Linear -> ReLU)*M -> Linear
-    """
-
-    def __init__(self, in_size, out_classes: int, channels: list,
-                 pool_every: int, hidden_dims: list):
+    def __init__(self, in_size, out_classes: int, hidden_dims: list):
         """
-        :param in_size: Size of input images, e.g. (C,H,W).
+        :param in_size: Size of input e.g. (H,W).
         :param out_classes: Number of classes to output in the final layer.
-        :param channels: A list of of length N containing the number of
-            (output) channels in each conv layer.
-        :param pool_every: P, the number of conv layers before each max-pool.
-        :param hidden_dims: List of of length M containing hidden dimensions of
-            each Linear layer (not including the output layer).
+        :param hidden_dims: List of of length M containing hidden dimensions of the hidden layers
         """
         super().__init__()
         assert channels and hidden_dims
 
         self.in_size = in_size
         self.out_classes = out_classes
-        self.channels = channels
-        self.pool_every = pool_every
         self.hidden_dims = hidden_dims
 
-        self.feature_extractor = self._make_feature_extractor()
         self.classifier = self._make_classifier()
 
-    def _make_feature_extractor(self):
-        in_channels, in_h, in_w, = tuple(self.in_size)
-
-        layers = []
-        #  [(CONV -> ReLU)*P -> MaxPool]*(N/P)
-        #  Use only dimension-preserving 3x3 convolutions. Apply 2x2 Max
-        #  Pooling to reduce dimensions after every P convolutions.
-        #  Note: If N is not divisible by P, then N mod P additional
-        #  CONV->ReLUs should exist at the end, without a MaxPool after them.
-        seq = nn.Sequential(*layers)
-        return seq
 
     def _make_classifier(self):
-        in_channels, in_h, in_w, = tuple(self.in_size)
-
+        in_h, in_w, = tuple(self.in_size)
+        input = in_h * in_2
+        
         layers = []
+        
+        layers.append(nn.Linear(input, self.hidden_dims[0], bias = True))
+        layers.append(nn.ReLU())
+        for i in len(hidden_dims) - 1:
+            layers.append(nn.Linear(self.hidden_dims[i], self.hidden_dims[i + 1], bias = True))
+            layers.append(nn.ReLU())
+        layers.append(nn.Linear(self.hidden_dims[-1], self.out_classes, bias = True))
+        layers.append(nn.Softmax(dim = 1))            
+            
+        seq = nn.Sequential(*layers)
+        
         return seq
 
+
     def forward(self, x):
-        #  Extract features from the input, run the classifier on them and
-        #  return class scores.
+        # x = x.flatten()
+        out = self.classifier(x)
         return out
         
-    def fit(self, x):
-        #  Extract features from the input, run the classifier on them and
-        #  return class scores.
-        return out
     
     
 class RandomForest(nn.Module):
