@@ -176,8 +176,8 @@ class RandomForest(nn.Module):
         self.n_jobs = n_jobs
         self.classifier = RandomForestClassifier(n_estimators=self.n_estimators, max_depth=self.max_depth, random_state=self.random_state , n_jobs= self.n_jobs , verbose=True)
         
-    def forward(self, x,y):
-        out = self.classifier.predict(x,y)
+    def forward(self,x):
+        out = self.classifier.predict(x)
         return out
     
     def fit(self, x,y):
