@@ -117,7 +117,6 @@ class MLP(nn.Module):
         :param hidden_dims: List of of length M containing hidden dimensions of the hidden layers
         """
         super().__init__()
-        assert channels and hidden_dims
 
         self.in_size = in_size
         self.out_classes = out_classes
@@ -127,14 +126,13 @@ class MLP(nn.Module):
 
 
     def _make_classifier(self):
-        in_h, in_w, = tuple(self.in_size)
-        input = in_h * in_2
+        self.in_size
         
         layers = []
         
-        layers.append(nn.Linear(input, self.hidden_dims[0], bias = True))
+        layers.append(nn.Linear(self.in_size, self.hidden_dims[0], bias = True))
         layers.append(nn.ReLU())
-        for i in len(hidden_dims) - 1:
+        for i in range(len(self.hidden_dims) - 1):
             layers.append(nn.Linear(self.hidden_dims[i], self.hidden_dims[i + 1], bias = True))
             layers.append(nn.ReLU())
         layers.append(nn.Linear(self.hidden_dims[-1], self.out_classes, bias = True))
@@ -174,11 +172,41 @@ class RandomForest(nn.Module):
         self.max_depth = in_max_depth
         self.random_state = random_state
         self.n_jobs = n_jobs
-        self.classifier = RandomForestClassifier(n_estimators=self.n_estimators, max_depth=self.max_depth, random_state=self.random_state , n_jobs= self.n_jobs , verbose=True)
+        self.classifier = RandomForestClassifier(n_estimators=self.n_estimators, max_depth=self.max_depth, random_state=self.random_state , n_jobs= self.n_jobs)
         
+    def __repr__(self):
+        return f'RandomForest(estimators={self.n_estimators},max_depth={self.max_depth},random_state={self.random_state})'
+
     def forward(self,x):
         out = self.classifier.predict(x)
-        return out
+        return torch.FloatTensor(out)
     
-    def fit(self, x,y):
-        self.classifier.fit(x,y)
+    def fit(self, X,y):
+        return self.classifier.fit(X,y)
+    
+    def evaluate(self,dl:  torch.utils.data.DataLoader,loss_fn,print_evey=100,):
+        losses = []
+        num_correct = 0
+        num_samples = len(dl.sampler)
+        num_batches = len(dl.batch_sampler)
+        
+        dl_iter = iter(dl)
+        for batch_idx in range(num_batches):
+                data, y = next(dl_iter)
+                y_hat = self.forward(data)
+                current_loss = loss_fn(y_hat,y.float()).item()
+                losses.append(current_loss)
+                num_correct += (y_hat==y).sum().item()
+                if batch_idx % print_evey ==  0:
+                    print(batch_idx,"/",num_batches,": Loss ",current_loss,", Num Correct ",num_correct)
+                
+        avg_loss = sum(losses) / num_batches
+        accuracy = 100. * num_correct / num_samples
+        return {"losses": losses, "accuracy": accuracy}
+
+    def test(self,sample,loss_fn,print_evey=10,):
+        X,y = sample
+        y_hat = torch.FloatTensor(self.classifier.predict(X))
+        current_loss = loss_fn(y_hat,y.float())
+        num_correct = (y_hat==y).sum()
+        return {"losses": current_loss, "accuracy":  100. * num_correct / len(sample)}

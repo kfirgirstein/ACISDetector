@@ -3,7 +3,7 @@ import itertools
 
 import numpy as np
 import matplotlib.pyplot as plt
-from .train_results import FitResult
+from src.train_results import FitResult
 
 
 def tensors_as_images(tensors, nrows=1, figsize=(8, 8), titles=[],
@@ -124,3 +124,31 @@ def plot_fit(fit_res: FitResult, fig=None, log_loss=False, legend=None):
         ax.grid(True)
 
     return fig, axes
+
+def plot_exp_results(filename_pattern, results_dir='results'):
+    fig = None
+    result_files = glob.glob(os.path.join(results_dir, filename_pattern))
+    result_files.sort()
+    if len(result_files) == 0:
+        print(f'No results found for pattern {filename_pattern}.', file=sys.stderr)
+        return
+    for filepath in result_files:
+        m = re.match('exp\d_(\d_)?(.*)\.json', os.path.basename(filepath))
+        cfg, fit_res = load_experiment(filepath)
+        fig, axes = plot_fit(fit_res, fig, legend=m[2],log_loss=True)
+    del cfg['filters_per_layer']
+    del cfg['layers_per_block']
+    print('common config: ', cfg)
+    
+def plot_residuals(y, y_pred, ax=None, res_label=None):
+    if ax is None:
+        _, ax = plt.subplots()
+    res = y - y_pred
+    ax.scatter(y_pred, y_pred-y, marker='s', edgecolor='black', label=res_label)
+    ax.hlines(y=0, xmin=y_pred.min(), xmax=y_pred.max(), color='red', lw=3)
+    ax.hlines(y=[-res.std(), res.std()], xmin=y_pred.min(), xmax=y_pred.max(), color='red', lw=3, linestyles=':')
+    ax.set_xlabel(r'$\hat{y}$')
+    ax.set_ylabel(r'$y - \hat{y}$')
+    if res_label is not None:
+        ax.legend()
+    return ax
