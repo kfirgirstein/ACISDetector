@@ -9,7 +9,6 @@
 Detector for instruction set, architecture and compiler on raw binaries.
 
 
-
 ## Installation
 
 1. Install the python3 version of [miniconda](https://conda.io/miniconda.html).
