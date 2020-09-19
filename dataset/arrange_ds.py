@@ -22,7 +22,7 @@ for d in  os.listdir(PATH):
 
 print(f"Dictionary is ready to dump\nSize {len(final_dataset)}")
 
-with open("./binary_raw.json","wb") as fj:
+with open("./binary_raw.json","w") as fj:
     json.dump(final_dataset,fj)
 
 print("Bye Bye!")
