@@ -1,7 +1,7 @@
 # ACISDetector
 
 [![GitHub license](https://img.shields.io/github/license/Naereen/StrapDown.js.svg)](https://github.com/Naereen/StrapDown.js/blob/master/LICENSE)
-[![GitHub release](https://img.shields.io/badge/version-v1.0-blue](https://github.com/kfirgirstein/ACISDetector/releases)
+[![GitHub release](https://img.shields.io/badge/version-v1.0-blue)](https://github.com/kfirgirstein/ACISDetector/releases)
 
 Detector for instruction set, architecture and compiler on raw binaries.
 
