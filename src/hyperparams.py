@@ -16,3 +16,7 @@ def mlp_hp():
 def cnn_hp():
     wstd, lr, = 0.1, 0.001
     return dict(wstd=wstd, lr=lr)
+
+def rnn_hp():
+    wstd, lr, = 0.1, 0.001
+    return dict(wstd=wstd, lr=lr)
