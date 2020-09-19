@@ -53,4 +53,4 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 Please make sure to update tests as appropriate.
 
 ## License
-[MIT Licensed](https://choosealicense.com/licenses/mit/) (file [LICENSE](/LICENSE)).© [Kfir Girstein](https://github.com/kfirgirstein/) & [yhonatanlus](), 2020
+[MIT Licensed](https://choosealicense.com/licenses/mit/) (file [LICENSE](/LICENSE)).© [Kfir Girstein](https://github.com/kfirgirstein/) & [yhonatanlus](https://github.com/Yehonatanlus), 2020
