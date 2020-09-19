@@ -5,24 +5,23 @@ import torch.nn as nn
 from sklearn.ensemble import RandomForestClassifier
 
 
-class RNN(nn.Module):
+class CNN(nn.Module):
     """
     A convolutional classifier model based on PyTorch nn.Modules.
+    This CNN is made out of the specified amount of convolutional layers endded by a fully connected layer
 
     The architecture is:
-    [(CONV -> ReLU)*P -> MaxPool]*(N/P) -> (Linear -> ReLU)*M -> Linear
+    [(CONV -> ReLU)* layers -> Linear
     """
 
-    def __init__(self, in_size, out_classes: int, channels: list,
-                 pool_every: int, hidden_dims: list):
+    def __init__(self, in_size, out_classes: int, hidden_channels: list, kernel_size, stride, padding = 0, ):
         """
-        :param in_size: Size of input e.g. (H,W).
-        :param out_classes: Number of classes to output in the final layer.
-        :param channels: A list of of length N containing the number of
-            (output) channels in each conv layer.
-        :param pool_every: P, the number of conv layers before each max-pool.
-        :param hidden_dims: List of of length M containing hidden dimensions of
-            each Linear layer (not including the output layer).
+        :param in_size: Size of input e.g. (Length).
+        :param out_classes: Number of classes to output in the final FC layer.
+        :param hidden_channels: A list of channels, this will determine the amount of convolution layers
+        :param kernel_size: P, the number of conv layers before each max-pool.
+        :param stride:  CNN stride
+        :param padding: CNN padding, logic says it should be 0
         """
         super().__init__()
         assert channels and hidden_dims
