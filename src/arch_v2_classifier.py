@@ -1,9 +1,6 @@
 import numpy as np
 import torch
-import itertools as it
 import torch.nn as nn
-from sklearn.ensemble import RandomForestClassifier
-
 
 class CNN(nn.Module):
     """
@@ -14,7 +11,7 @@ class CNN(nn.Module):
     [(CONV -> ReLU)* layers -> Linear
     """
 
-    def __init__(self, in_size, out_classes: int, hidden_channels = None, kernel_size, stride, padding = 0, ):
+    def __init__(self, in_size, out_classes: int, kernel_size,stride,dilation=1,hidden_channels = None, padding = 0):
         """
         :param in_size: Size of input e.g. (Length).
         :param out_classes: Number of classes to output in the final FC layer.
@@ -24,15 +21,13 @@ class CNN(nn.Module):
         :param padding: CNN padding, logic says it should be 0
         """
         super().__init__()
-        assert channels and hidden_dims
-
         self.in_size = in_size
         self.out_classes = out_classes
         self.hidden_channels = hidden_channels
         self.kernel_size = kernel_size
         self.stride = stride
         self.padding = padding
-        
+        self.dilation = dilation
         self.feature_extractor = self._make_feature_extractor()
         self.classifier = self._make_classifier()
         
@@ -43,23 +38,23 @@ class CNN(nn.Module):
         '''
         in_len = self.in_size
         cnn_layers = []
-        if hidden_channels is None:
-            cnn_layers.append(nn.Conv1d(1, 1, self.kernel_size, self.stride, self,padding, self.dialation, bias = True))
+        if self.hidden_channels is None:
+            cnn_layers.append(nn.Conv1d(1, 1, self.kernel_size, self.stride, self.padding, self.dilation, bias = True))
             cnn_layers.append(nn.ReLU())
-            self.out_len = _compute_len_after_convolution(in_len, kernel_size, dialation, stride, padding)
+            self.out_len = self._compute_len_after_convolution(in_len,  self.kernel_size,  self.dilation,  self.stride, self.padding)
         else:
             in_channels = 1
             for i in (range(len(self.hidden_channels) - 1)):
-                cnn_layers.append(nn.Conv1d(in_channels, self.hidden_channels[i], self.kernel_size, self.stride, self,padding, self.dialation, bias = True))
+                cnn_layers.append(nn.Conv1d(in_channels, self.hidden_channels[i], self.kernel_size, self.stride, self.padding, self.dilation, bias = True))
                 cnn_layers.append(nn.ReLU())
                 in_channels = self.hidden_channels[i]
 
-                out_len = _compute_len_after_convolution(in_len, kernel_size, dialation, stride, padding)
+                out_len = self._compute_len_after_convolution(in_len,self.kernel_size,  self.dilation,  self.stride, self.padding)
                 in_len = out_len
                 
-            cnn_layers.append(nn.Conv1d(in_channels, self.hidden_channels[-1], self.kernel_size, self.stride, self,padding, self.dialation, bias = True))
+            cnn_layers.append(nn.Conv1d(in_channels, self.hidden_channels[-1], self.kernel_size, self.stride, self.padding, self.dilation, bias = True))
             cnn_layers.append(nn.ReLU())
-            self.out_len = _compute_len_after_convolution(in_len, kernel_size, dialation, stride, padding)
+            self.out_len = self._compute_len_after_convolution(in_len,self.kernel_size,  self.dilation,  self.stride, self.padding)
             
         cnn = nn.Sequential(*cnn_layers)
         return cnn
@@ -69,18 +64,18 @@ class CNN(nn.Module):
         '''
         (Linear -> Softmax) - one FC layer
         '''
-        layers = []       
+        layers = []
         if self.hidden_channels is None:
-            layers.append(nn.Linear(self.out_len, self.out_classes)
+            layers.append(nn.Linear(self.out_len, self.out_classes))
         else:
-            layers.append(nn.Linear(self.out_len * self.hidden_channels[-1], self.out_classes)
-        layers.append(nn.(dim = 1))
+            layers.append(nn.Linear(self.out_len * self.hidden_channels[-1], self.out_classes))
+        layers.append(nn.Softmax(dim = 1))
         seq = nn.Sequential(*layers)
         return seq
 
         
-    def _compute_len_after_convolution(in_len, kernel_size, dialation, stride, padding):
-        out_len = ((in_len + (2 * padding) - (dialation * (kernel_size - 1)) - 1) // stride) + 1
+    def _compute_len_after_convolution(self,in_len, kernel_size, dilation, stride, padding):
+        out_len = ((in_len + (2 * padding) - (dilation * (kernel_size - 1)) - 1) // stride) + 1
         return out_len
 
 
@@ -119,11 +114,11 @@ class RNN(nn.Module):
         self.hidden_features = hidden_features
 
         # RNN part
-        self.rnn = nn.RNN(input_size = self.input_size, hidden_size = self.hidden_features, num_layers = self.num_layers, nonlinearity = 'tanh', bias = True )
+        self.rnn = nn.RNN(input_size = self.in_size, hidden_size = self.hidden_features, num_layers = self.num_layers, nonlinearity = 'tanh', bias = True )
             
         # Labeling part 
         label_layers = []
-        label_layers.append(nn.Linear(self.num_layers * hidden_size, self.out_classes, bias = True))
+        label_layers.append(nn.Linear(self.num_layers *  self.hidden_features, self.out_classes, bias = True))
         label_layers.append(nn.Softmax(dim = 1)) 
         self.label = nn.Sequential(*label_layers)
 
@@ -133,7 +128,7 @@ class RNN(nn.Module):
         It is assumed x is of size (Batch_size, sequence_length )
         '''
         h_0 = torch.zeros(self.num_layers, self.batch_size, self.hidden_features)
-        _, h_n = self.RNN(x, h_0)
+        _, h_n = self.rnn(x, h_0)
         out = self.label(h_n)
         return out
     
