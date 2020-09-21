@@ -85,6 +85,7 @@ class CNN(nn.Module):
         Extract features from the input, run the classifier on them and
         return class scores.
         '''
+        x = x.unsqueeze(1)
         features = self.feature_extractor(x)
         features = features.view(features.size(0), -1)
         out = self.classifier(features)
@@ -127,8 +128,12 @@ class RNN(nn.Module):
         '''
         It is assumed x is of size (Batch_size, sequence_length )
         '''
-        h_0 = torch.zeros(self.num_layers, self.batch_size, self.hidden_features)
+        x = x.unsqueeze(1)
+        print(x.shape)
+        h_0 = torch.zeros(self.num_layers, 1, self.hidden_features)
         _, h_n = self.rnn(x, h_0)
+        h_n = h_n.flatten().unsqueeze(0)
+        print(h_n.shape)
         out = self.label(h_n)
         return out
     

@@ -28,7 +28,7 @@ class RawBinaryDataset(Dataset):
     def __init__(self, json_file):
         """
         Args:
-            csv_file (string): Path to the csv file with annotations.
+            raw_file (string): Path to the raw file with annotations.
         """
         with open(json_file,"r") as f:
             data = f.read()
