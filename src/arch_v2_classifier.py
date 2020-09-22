@@ -145,7 +145,7 @@ class MLP(nn.Module):
     Relu after every layer and a softmax after the last layer.
     """
 
-    def __init__(self, in_size, out_classes: int, hidden_dims: list):
+    def __init__(self, in_size, out_classes: int, hidden_dims: list,dropout:float):
         """
         :param in_size: Size of input e.g. (H,W).
         :param out_classes: Number of classes to output in the final layer.
@@ -156,6 +156,7 @@ class MLP(nn.Module):
         self.in_size = in_size
         self.out_classes = out_classes
         self.hidden_dims = hidden_dims
+        self.dropout = dropout
 
         self.classifier = self._make_classifier()
 
@@ -164,13 +165,19 @@ class MLP(nn.Module):
         self.in_size
         
         layers = []
-        
-        layers.append(nn.Linear(self.in_size, self.hidden_dims[0], bias = True))
-        layers.append(nn.ReLU())
-        for i in range(len(self.hidden_dims) - 1):
-            layers.append(nn.Linear(self.hidden_dims[i], self.hidden_dims[i + 1], bias = True))
-            layers.append(nn.ReLU())
-        layers.append(nn.Linear(self.hidden_dims[-1], self.out_classes, bias = True))
+        if self.hidden_dims is None or len(self.hidden_dims) <= 0:
+             layers.append(nn.Linear(self.in_size, self.out_classes, bias = True))
+        else:
+            layers.append(nn.Linear(self.in_size, self.hidden_dims[0], bias = True))
+            layers.append(nn.Sigmoid())
+            if self.dropout > 0:
+                layers.append(nn.Dropout(self.dropout)) 
+            for i in range(len(self.hidden_dims) - 1):
+                layers.append(nn.Linear(self.hidden_dims[i], self.hidden_dims[i + 1], bias = True))
+                layers.append(nn.Sigmoid())
+                if self.dropout > 0:
+                    layers.append(nn.Dropout(self.dropout)) 
+            layers.append(nn.Linear(self.hidden_dims[-1], self.out_classes, bias = True))
         layers.append(nn.Softmax(dim = 1))            
             
         seq = nn.Sequential(*layers)
