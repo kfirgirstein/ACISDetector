@@ -98,9 +98,9 @@ class RNN(nn.Module):
     An RNN layer followed by a FC layer
     """
 
-    def __init__(self, in_size, batch_size, out_classes: int, num_layers = 1, hidden_features = 256):
+    def __init__(self, input_size, batch_size, out_classes: int, num_layers = 1, hidden_features = 64):
         """
-        :param in_size: Size of input
+        :param input_size: Size of input to rnn layer (The total sample size (1000 in our case) should be divideable by thie parameter)
         :param batch_size: Number of batches in the input.
         :param out_classes: Number of classes to output in the final layer.
         :param num_layers: Number of stacked RNN layers.
@@ -108,14 +108,14 @@ class RNN(nn.Module):
         """
         super().__init__()
 
-        self.in_size = in_size
+        self.input_size = input_size
         self.out_classes = out_classes
         self.batch_size = batch_size
         self.num_layers = num_layers
         self.hidden_features = hidden_features
 
         # RNN part
-        self.rnn = nn.RNN(input_size = self.in_size, hidden_size = self.hidden_features, num_layers = self.num_layers, nonlinearity = 'tanh', bias = True )
+        self.rnn = nn.RNN(input_size = self.input_size, hidden_size = self.hidden_features, num_layers = self.num_layers, nonlinearity = 'tanh', bias = True )
             
         # Labeling part 
         label_layers = []
@@ -128,12 +128,14 @@ class RNN(nn.Module):
         '''
         It is assumed x is of size (Batch_size, sequence_length )
         '''
-        x = x.unsqueeze(1)
-        print(x.shape)
-        h_0 = torch.zeros(self.num_layers, 1, self.hidden_features)
+        batch_size = x.shape[0]
+        sample_sequences = x.shape[1] // self.input_size
+        
+        x = x.reshape(batch_size, sample_sequences, self.input_size).permute(1,0,2)
+        h_0 = torch.zeros(self.num_layers, batch_size, self.hidden_features)
         _, h_n = self.rnn(x, h_0)
-        h_n = h_n.flatten().unsqueeze(0)
-        print(h_n.shape)
+        
+        h_n = h_n.permute(1,0,2).reshape(batch_size,self.num_layers * self.hidden_features)
         out = self.label(h_n)
         return out
     

@@ -14,10 +14,10 @@ def mlp_hp():
     return dict(hidden_size=hidden_size, lr=lr, reg=reg)
 
 def cnn_hp():
-    lr,k,s,p,d= 0.001,4,2,0,1
-    h_c = [1,1,1,1]
+    lr,k,s,p,d= 0.001,32,4,0,1
+    h_c = [1, 4, 4]
     return dict(lr=lr,k=k,s=s,h_c=h_c,p=p,d=d)
 
 def rnn_hp():
-    l,h_f, lr, =2,512, 0.001
-    return dict(l=l,h_f = h_f, lr=lr)
+    i_s, l, h_f, lr, = 100, 4, 64, 0.0001
+    return dict(i_s=i_s, l=l, h_f=h_f, lr=lr)
