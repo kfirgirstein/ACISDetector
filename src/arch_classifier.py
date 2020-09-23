@@ -130,13 +130,16 @@ class MLP(nn.Module):
         
         layers = []
         
-        layers.append(nn.Linear(self.in_size, self.hidden_dims[0], bias = True))
-        layers.append(nn.ReLU())
-        for i in range(len(self.hidden_dims) - 1):
-            layers.append(nn.Linear(self.hidden_dims[i], self.hidden_dims[i + 1], bias = True))
+        if self.hidden_dims is None:
+             layers.append(nn.Linear(self.in_size, self.out_classes, bias = True))
+        else:
+            layers.append(nn.Linear(self.in_size, self.hidden_dims[0], bias = True))
             layers.append(nn.ReLU())
-        layers.append(nn.Linear(self.hidden_dims[-1], self.out_classes, bias = True))
-        layers.append(nn.Softmax(dim = 1))            
+            for i in range(len(self.hidden_dims) - 1):
+                layers.append(nn.Linear(self.hidden_dims[i], self.hidden_dims[i + 1], bias = True))
+                layers.append(nn.ReLU())
+            layers.append(nn.Linear(self.hidden_dims[-1], self.out_classes, bias = True))
+        layers.append(nn.Softmax(dim = 1))         
             
         seq = nn.Sequential(*layers)
         

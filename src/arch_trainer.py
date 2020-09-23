@@ -204,7 +204,6 @@ class ArchTrainer(Trainer):
         result = self.optimizer.step()
         num_correct = (y_hat.argmax(1)==y).sum().item()
         loss = loss.item()
-
         return BatchResult(loss, num_correct)
 
     def test_batch(self, batch) -> BatchResult:

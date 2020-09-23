@@ -9,9 +9,15 @@ def random_forest_hp():
     return dict(estimators=estimators, random_state=random_state, n_jobs=n_jobs)
 
 def mlp_hp():
-    lr, reg = 0.01, 0.05
+    lr,reg = 0.01,0.05
     hidden_size = [100]
     return dict(hidden_size=hidden_size, lr=lr, reg=reg)
+
+def mlp_hp_raw():
+    lr,momentum,dropout = 0.00075,0.9,0.0
+    hidden_size = [300]
+    #hidden_size = [750,300]
+    return dict(hidden_size=hidden_size, lr=lr, momentum=momentum,dropout=dropout)
 
 def cnn_hp():
     lr,k,s,p,d= 0.001,32,4,0,1
