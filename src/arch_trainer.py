@@ -4,6 +4,7 @@ import os
 import sys
 import tqdm
 import torch
+from pathlib import Path
 
 from torch.utils.data import DataLoader
 from typing import Callable, Any
@@ -58,8 +59,23 @@ class Trainer(abc.ABC):
 
         best_acc = None
         epochs_without_improvement = 0
+        
+        checkpoint_filename = None
+        if checkpoints is not None:
+            checkpoint_filename = f'{checkpoints}.pt'
+            Path(os.path.dirname(checkpoint_filename)).mkdir(exist_ok=True)
+            if os.path.isfile(checkpoint_filename):
+                print(f'*** Loading checkpoint file {checkpoint_filename}')
+                saved_state = torch.load(checkpoint_filename,
+                                         map_location=self.device)
+                best_acc = saved_state.get('best_acc', best_acc)
+                epochs_without_improvement =\
+                    saved_state.get('ewi', epochs_without_improvement)
+                self.model.load_state_dict(saved_state['model_state'])
+                
 
         for epoch in range(num_epochs):
+            save_checkpoint = False
             verbose = False  # pass this to train/test_epoch.
             if epoch % print_every == 0 or epoch == num_epochs-1:
                 verbose = True
@@ -78,14 +94,20 @@ class Trainer(abc.ABC):
             if epo_test.accuracy > best_acc:
                 best_acc=epo_test.accuracy
                 epochs_without_improvement=0
-                if checkpoints is not None:
-                    torch.save(self.model.parameters,checkpoints)
+                save_checkpoint = True
             else:
                 epochs_without_improvement+=1
             
             if early_stopping is not None and epochs_without_improvement == early_stopping:
                 break
-            # ========================
+                
+            if save_checkpoint and checkpoint_filename is not None:
+                saved_state = dict(best_acc=best_acc,
+                                   ewi=epochs_without_improvement,
+                                   model_state=self.model.state_dict())
+                torch.save(saved_state, checkpoint_filename)
+                print(f'*** Saved checkpoint {checkpoint_filename} '
+                      f'at epoch {epoch+1}')
 
         return FitResult(actual_num_epochs,
                          train_loss, train_acc, test_loss, test_acc)

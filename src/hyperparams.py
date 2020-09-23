@@ -15,8 +15,8 @@ def mlp_hp():
 
 def mlp_hp_raw():
     lr,momentum,dropout = 0.00075,0.9,0.0
-    #hidden_size = [300]
-    hidden_size = [8000]
+    hidden_size = [300]
+    #hidden_size = [8000]
     return dict(hidden_size=hidden_size, lr=lr, momentum=momentum,dropout=dropout)
 
 def cnn_hp():
