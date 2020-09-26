@@ -124,19 +124,20 @@ class RNN(nn.Module):
         self.label = nn.Sequential(*label_layers)
 
 
-    def forward(self, x):
+    def forward(self, x,device='cpu'):
         '''
         It is assumed x is of size (Batch_size, sequence_length )
         '''
         batch_size = x.shape[0]
         sample_sequences = x.shape[1] // self.input_size
-        
+        if(x.get_device()!=-1):
+            device = 'cuda'
         x = x.reshape(batch_size, sample_sequences, self.input_size).permute(1,0,2)
-        h_0 = torch.zeros(self.num_layers, batch_size, self.hidden_features)
+        h_0 = torch.zeros(self.num_layers, batch_size, self.hidden_features,device=device)
         _, h_n = self.rnn(x, h_0)
         
         h_n = h_n.permute(1,0,2).reshape(batch_size,self.num_layers * self.hidden_features)
-        out = self.label(h_n)
+        out = self.label(h_n):Q:
         return out
     
 
