@@ -1,9 +1,17 @@
+import sys
 import math
 import itertools
-
+import glob
+import os
+import re
 import numpy as np
 import matplotlib.pyplot as plt
+sys.path.append('../')
+
 from src.train_results import FitResult
+from experiments.run_ex import *
+
+
 
 
 def tensors_as_images(tensors, nrows=1, figsize=(8, 8), titles=[],
@@ -125,7 +133,7 @@ def plot_fit(fit_res: FitResult, fig=None, log_loss=False, legend=None):
 
     return fig, axes
 
-def plot_exp_results(filename_pattern, results_dir='results'):
+def plot_exp_results(filename_pattern,  results_dir='experiments'):
     fig = None
     result_files = glob.glob(os.path.join(results_dir, filename_pattern))
     result_files.sort()
@@ -134,11 +142,8 @@ def plot_exp_results(filename_pattern, results_dir='results'):
         return
     for filepath in result_files:
         m = re.match('exp\d_(\d_)?(.*)\.json', os.path.basename(filepath))
-        cfg, fit_res = load_experiment(filepath)
+        fit_res = load_experiment(filepath)
         fig, axes = plot_fit(fit_res, fig, legend=m[2],log_loss=True)
-    del cfg['filters_per_layer']
-    del cfg['layers_per_block']
-    print('common config: ', cfg)
     
 def plot_residuals(y, y_pred, ax=None, res_label=None):
     if ax is None:
