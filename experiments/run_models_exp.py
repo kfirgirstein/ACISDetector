@@ -95,6 +95,7 @@ for h_d in ex_hidden_dim:
         )
         loss_fn = torch.nn.CrossEntropyLoss()
         trainer = training.ArchTrainer(_mlp, loss_fn, optimizer, device)
+        experiments.run_experiment(exp_name, trainer, dl_train, dl_test, num_epochs=30, print_every=50)
 print(f"****************************\n\n Wow it took a while ... to see the results you can go into to {RESULT_DIR} folder and look for all MLP experiments!")
 ## CNN
 
@@ -133,7 +134,7 @@ print(f"****************************\n\nNow let's train RNN\nhyperparameter are:
 for i_s in ex_input_size:
     for h_f in ex_hidden_features:
         for l in ex_num_layers:
-            exp_name = f"exp1_RNN_is{i_s}_hf{h_f}_l{l}"
+            exp_name = f"exp_RNN_is{i_s}_hf{h_f}_l{l}"
             if os.path.isfile(f"{os.path.join(RESULT_DIR, exp_name)}.json"):
                 continue
             _rnn = arch_api.RNN(i_s, batch_size, num_classes, l, h_f)
