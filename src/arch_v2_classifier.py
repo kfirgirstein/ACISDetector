@@ -137,7 +137,7 @@ class RNN(nn.Module):
         _, h_n = self.rnn(x, h_0)
         
         h_n = h_n.permute(1,0,2).reshape(batch_size,self.num_layers * self.hidden_features)
-        out = self.label(h_n):Q:
+        out = self.label(h_n)
         return out
     
 
