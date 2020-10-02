@@ -52,4 +52,4 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 Please make sure to update tests as appropriate. We recommend to follow [Contribute Guideline](/.github/CONTRIBUTING.md)
 
 ## License
-[MIT Licensed](https://choosealicense.com/licenses/mit/) (file [LICENSE](/.github/LICENSE)).© [Kfir Girstein](https://github.com/kfirgirstein/) & [Yehonatan Lusky](https://github.com/Yehonatanlus), 2020
+[MIT Licensed](https://choosealicense.com/licenses/mit/) (file [LICENSE](/.github/LICENSE.md)).© [Kfir Girstein](https://github.com/kfirgirstein/) & [Yehonatan Lusky](https://github.com/Yehonatanlus), 2020
