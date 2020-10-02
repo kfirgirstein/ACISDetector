@@ -7,12 +7,7 @@ import re
 import numpy as np
 import matplotlib.pyplot as plt
 sys.path.append('../')
-
-from src.train_results import FitResult
 from experiments.run_ex import *
-
-
-
 
 def tensors_as_images(tensors, nrows=1, figsize=(8, 8), titles=[],
                       wspace=0.1, hspace=0.2, cmap=None):
@@ -133,14 +128,19 @@ def plot_fit(fit_res: FitResult, fig=None, log_loss=False, legend=None):
 
     return fig, axes
 
-def plot_exp_results(filename_pattern,  results_dir='experiments'):
-    fig = None
+def plot_exp_results(filename_pattern, results_dir='experiments'):
     result_files = glob.glob(os.path.join(results_dir, filename_pattern))
+    plot_exp_list_results(result_files,results_dir)
+        
+def plot_exp_list_results(result_files, results_dir='experiments'):
+    fig = None
     result_files.sort()
     if len(result_files) == 0:
         print(f'No results found for pattern {filename_pattern}.', file=sys.stderr)
         return
     for filepath in result_files:
+        if not results_dir in filepath:
+            filepath = os.path.join(results_dir, filepath)
         m = re.match('exp_(\d_)?(.*)\.json', os.path.basename(filepath))
         fit_res = load_experiment(filepath)
         fig, axes = plot_fit(fit_res, fig, legend=m[2],log_loss=True)
