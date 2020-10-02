@@ -6,9 +6,12 @@ sys.path.append('../')
 from src.train_results import FitResult
 
 def run_experiment(run_name,trainer,dl_train,dl_test, out_dir='./experiments',early_stopping=None, checkpoints=None,num_epochs=50,print_every=10,**kw):
-
-    fit_res = trainer.fit(dl_train,dl_test,num_epochs,checkpoints,early_stopping,print_every=print_every,**kw)
-    save_experiment(run_name, out_dir, fit_res)
+    print(f"Start experiment:{run_name}")
+    try:
+        fit_res = trainer.fit(dl_train,dl_test,num_epochs,checkpoints,early_stopping,print_every=print_every,**kw)
+        save_experiment(run_name, out_dir, fit_res)
+    except Exception as e:
+        print(e)
 
 def save_experiment(run_name, out_dir, fit_res):
     output = dict(

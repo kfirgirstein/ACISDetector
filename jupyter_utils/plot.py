@@ -141,7 +141,7 @@ def plot_exp_results(filename_pattern,  results_dir='experiments'):
         print(f'No results found for pattern {filename_pattern}.', file=sys.stderr)
         return
     for filepath in result_files:
-        m = re.match('exp\d_(\d_)?(.*)\.json', os.path.basename(filepath))
+        m = re.match('exp_(\d_)?(.*)\.json', os.path.basename(filepath))
         fit_res = load_experiment(filepath)
         fig, axes = plot_fit(fit_res, fig, legend=m[2],log_loss=True)
     
