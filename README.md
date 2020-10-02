@@ -10,13 +10,13 @@ Detector for instruction set, architecture and compiler on raw binaries.
 
 ## Repo structure
 
-- jupyter_utils: Set of tools and scripts to Jupyter notbook (*.ipynd file).
+- **jupyter_utils**: Set of tools and scripts to Jupyter notbook (*.ipynd file).
 
-- src: ACIS models and supporting classes to train and evaluate them.
+- **src**: ACIS models and supporting classes to train and evaluate them.
 
-- dataset: Our scrips to create the dataset, with the help of [isadetect method](https://github.com/kairis/isadetect#dataset).
+- **dataset**: Our scrips to create the dataset, with the help of [isadetect method](https://github.com/kairis/isadetect#dataset).
 
-- isadetect: Useful scripts aimed to transfer "isadetect" project to PyTorch  .
+- **isadetect**: Useful scripts aimed to transfer "isadetect" project to PyTorch  .
 
 ## Installation
 
@@ -65,4 +65,4 @@ Please make sure to update tests as appropriate. We recommend to follow [Contrib
 Please feel free to submit an [issue](https://github.com/kfirgirstein/ACISDetector/issues/new) for any questions or concerns.
 
 ## License
-[MIT Licensed](https://choosealicense.com/licenses/mit/) (file [LICENSE](/.github/LICENSE.md)).© [Kfir Girstein](https://github.com/kfirgirstein/) & [Yehonatan Lusky](https://github.com/Yehonatanlus), 2020
+MIT Licensed (file [LICENSE](/.github/LICENSE.md)).© [Kfir Girstein](https://github.com/kfirgirstein/) & [Yehonatan Lusky](https://github.com/Yehonatanlus), 2020
