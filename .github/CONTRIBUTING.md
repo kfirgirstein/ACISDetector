@@ -25,7 +25,7 @@ don't forget to:
    Pull Request would represent.
 - [x] You may merge the Pull Request in once you have the sign-off of two other developers, or if you 
    do not have permission to do that, you may request the second reviewer to merge it for you.
-- [x] Follow our [Code of conduct](/CODE_OF_CONDUCT.md)
+- [x] Follow our [Code of conduct](/.github/CODE_OF_CONDUCT.md)
 
 
 ## Frequently asked questions

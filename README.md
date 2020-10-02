@@ -49,7 +49,7 @@ You can also view our results notebooks in your browser using `jupter notebook`!
  ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
-Please make sure to update tests as appropriate. We recommend to follow [Contribute Guideline](/CONTRIBUTING.md)
+Please make sure to update tests as appropriate. We recommend to follow [Contribute Guideline](/.github/CONTRIBUTING.md)
 
 ## License
-[MIT Licensed](https://choosealicense.com/licenses/mit/) (file [LICENSE](/LICENSE)).© [Kfir Girstein](https://github.com/kfirgirstein/) & [yhonatanlus](https://github.com/Yehonatanlus), 2020
+[MIT Licensed](https://choosealicense.com/licenses/mit/) (file [LICENSE](/.github/LICENSE)).© [Kfir Girstein](https://github.com/kfirgirstein/) & [Yehonatan Lusky](https://github.com/Yehonatanlus), 2020
