@@ -148,11 +148,12 @@ class MLP(nn.Module):
     Relu after every layer and a softmax after the last layer.
     """
 
-    def __init__(self, in_size, out_classes: int, hidden_dims: list,dropout:float):
+    def __init__(self, in_size, out_classes: int, hidden_dims: list, dropout:float):
         """
         :param in_size: Size of input e.g. (H,W).
         :param out_classes: Number of classes to output in the final layer.
         :param hidden_dims: List of of length M containing hidden dimensions of the hidden layers
+        :param dropout: droput in the different layers
         """
         super().__init__()
 
@@ -193,4 +194,56 @@ class MLP(nn.Module):
         out = self.classifier(x)
         return out
         
-    
+
+class FinalArch(nn.Module):
+    """  
+    This is a Multi layer perceptron that works on a feature vector that we provide.
+    All layers are fully conected.
+    Relu after every layer and a softmax after the last layer.
+    This is finalized by a softmax
+    """
+
+    def __init__(self, model, n_classes: int, hidden_dims: list, dropout:float):
+        """
+        :param model: The model to invoke first on the input
+        :param n_classes: Number of classes possible
+        :param hidden_dims: List of of length M containing hidden dimensions of the hidden layers
+        :param dropout: droput in the different layers
+        """
+        super().__init__()
+
+        self.n_classes = n_classes
+        self.hidden_dims = hidden_dims
+        self.dropout = dropout
+        
+        self.model = model
+        self.classifier = self._make_classifier()
+
+
+    def _make_classifier(self):
+        out_classes
+        layers = []
+        if self.hidden_dims is None or len(self.hidden_dims) <= 0:
+             layers.append(nn.Linear(self.n_classes * 2, self.n_classes, bias = True))
+        else:
+            layers.append(nn.Linear(self.n_classes * 2, self.hidden_dims[0], bias = True))
+            layers.append(nn.ReLU())
+            if self.dropout > 0:
+                layers.append(nn.Dropout(self.dropout)) 
+            for i in range(len(self.hidden_dims) - 1):
+                layers.append(nn.Linear(self.hidden_dims[i], self.hidden_dims[i + 1], bias = True))
+                layers.append(nn.ReLU())
+                if self.dropout > 0:
+                    layers.append(nn.Dropout(self.dropout)) 
+            layers.append(nn.Linear(self.hidden_dims[-1], self.n_classes, bias = True))
+        layers.append(nn.Softmax(dim = 1))            
+            
+        seq = nn.Sequential(*layers)
+        
+        return seq
+
+
+    def forward(self, x):
+        out = self.classifier(x)
+        return out
+ 
